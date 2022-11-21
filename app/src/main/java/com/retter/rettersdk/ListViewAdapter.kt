@@ -40,7 +40,10 @@ class listViewAdapter(private val context: Activity, private val todos: ArrayLis
             builder.setView(input)
             builder.setNegativeButton("Cancel", null)
             builder.setPositiveButton("Save") { dialogInterface, i ->
-                rio.getCloudObject(RioCloudObjectOptions(classId = "TodoProject", instanceId = "01gj501gb69yse4sbt0jp61vdq"), onSuccess = { cloudObj ->
+                rio.getCloudObject(RioCloudObjectOptions(
+                    classId = "TodoProject",
+                    instanceId = "01gj501gb69yse4sbt0jp61vdq"
+                ), onSuccess = { cloudObj ->
                     cloudObj.call<UpsertTodoResponse>(
                         RioCallMethodOptions(
                             method = "UpsertTodo",
@@ -63,7 +66,10 @@ class listViewAdapter(private val context: Activity, private val todos: ArrayLis
             builder.setTitle("Remove Todo")
             builder.setNegativeButton("Cancel", null)
             builder.setPositiveButton("Remove") { dialogInterface, i ->
-                rio.getCloudObject(RioCloudObjectOptions(classId = "TodoProject", instanceId = "01gj501gb69yse4sbt0jp61vdq"), onSuccess = { cloudObj ->
+                rio.getCloudObject(RioCloudObjectOptions(
+                    classId = "TodoProject",
+                    instanceId = "01gj501gb69yse4sbt0jp61vdq"
+                ), onSuccess = { cloudObj ->
                     cloudObj.call<RemoveTodoResponse>(
                         RioCallMethodOptions(
                             method = "RemoveTodo",

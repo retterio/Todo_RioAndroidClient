@@ -23,18 +23,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rio.getCloudObject(RioCloudObjectOptions(classId = "Authenticate", instanceId = "01gj4yxz2ax9txgsxjnxd4rhrf") , onSuccess = { cloudObj ->
-            cloudObj.call<AuthResponse>(RioCallMethodOptions("generateCustomToken", body = AuthRequest()), onSuccess = {
-                rio.authenticateWithCustomToken(it.body!!.data!!.customToken.toString())
-            }, onError = {
-                Log.e("", "")
-            })
+        rio.getCloudObject(RioCloudObjectOptions(
+            classId = "Authenticate",
+            instanceId = "01gj4yxz2ax9txgsxjnxd4rhrf"
+        ), onSuccess = { cloudObj ->
+            cloudObj.call<AuthResponse>(
+                RioCallMethodOptions("generateCustomToken",body = AuthRequest()),
+                onSuccess = {
+                    //Authenticating with `rio.authenticateWithCustomToken()`.
+                    rio.authenticateWithCustomToken(it.body!!.data!!.customToken.toString())
+                },
+                onError = {
+                    Log.e("", "")
+                })
         }, onError = { throwable ->
             Log.d("TAG", throwable!!.message.toString())
         })
 
-        rio.getCloudObject(RioCloudObjectOptions(classId = "TodoProject", instanceId = "01gj501gb69yse4sbt0jp61vdq") , onSuccess = { cloudObj ->
+        // Get class
+        rio.getCloudObject(RioCloudObjectOptions(
+            classId = "TodoProject",
+            instanceId = "01gj501gb69yse4sbt0jp61vdq") ,
+            onSuccess = { cloudObj ->
+            // Subscibe is the for listening live updates.
+            // Here we are listening public state changes.
             cloudObj.public.subscribe( eventFired = { event ->
+                // When public state changes we get todos from backend
                 cloudObj.call<GetTodosResponse>(RioCallMethodOptions(
                     method = "GetTodos"
                 ), onSuccess = { response ->
@@ -67,18 +81,22 @@ class MainActivity : AppCompatActivity() {
             builder.setView(input)
             builder.setNegativeButton("Cancel", null)
             builder.setPositiveButton("Add") { dialogInterface, i ->
-                rio.getCloudObject(RioCloudObjectOptions(classId = "TodoProject", instanceId = "01gj501gb69yse4sbt0jp61vdq"), onSuccess = { cloudObj ->
-                    cloudObj.call<UpsertTodoResponse>(RioCallMethodOptions(
-                        method = "UpsertTodo",
-                        body = UpsertTodoRequest(input.text.toString())
-                    ), onSuccess = { response ->
-                        Log.d("TAG", "succesfully added" )
-                    }, onError = {
-                        Log.d("TAG", "fError" + it!!.message.toString())
+                rio.getCloudObject(RioCloudObjectOptions(
+                    classId = "TodoProject",
+                    instanceId = "01gj501gb69yse4sbt0jp61vdq"
+                ),
+                    onSuccess = { cloudObj ->
+                        cloudObj.call<UpsertTodoResponse>(RioCallMethodOptions(
+                            method = "UpsertTodo",
+                            body = UpsertTodoRequest(input.text.toString())
+                        ), onSuccess = { response ->
+                            Log.d("TAG", "succesfully added" )
+                        }, onError = {
+                            Log.d("TAG", "fError" + it!!.message.toString())
+                        })
+                    }, onError = { throwable ->
+                        Log.d("TAG", throwable!!.message.toString())
                     })
-                }, onError = { throwable ->
-                    Log.d("TAG", throwable!!.message.toString())
-                })
             }
             builder.show()
             true
